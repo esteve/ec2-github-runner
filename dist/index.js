@@ -145081,17 +145081,21 @@ async function startEc2Instance(label, githubRegistrationToken) {
     IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
     InstanceMarketOptions: buildMarketOptions(),
-    BlockDeviceMappings: [
+  };
+
+  if (config.input.ec2VolumeDevice) {
+    params['BlockDeviceMappings'] = [
       {
-        DeviceName: '/dev/sda1',
+        DeviceName: config.input.ec2VolumeDevice,
         Ebs: {
-          VolumeSize: 50,
+          VolumeSize: config.input.ec2VolumeSize ?? 8,
           DeleteOnTermination: true,
           VolumeType: 'gp3'
         }
       }
-    ],
-  };
+    ]
+  }
+
 
   try {
     const result = await ec2.send(new RunInstancesCommand(params));
@@ -145169,6 +145173,8 @@ class Config {
       ec2ImageId: core.getInput('ec2-image-id'),
       ec2InstanceId: core.getInput('ec2-instance-id'),
       ec2InstanceType: core.getInput('ec2-instance-type'),
+      ec2VolumeDevice: core.getInput('ec2-volume-device'),
+      ec2VolumeSize: core.getInput('ec2-volume-size'),
       githubToken: core.getInput('github-token'),
       iamRoleName: core.getInput('iam-role-name'),
       label: core.getInput('label'),

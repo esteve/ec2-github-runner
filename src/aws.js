@@ -73,17 +73,21 @@ async function startEc2Instance(label, githubRegistrationToken) {
     IamInstanceProfile: { Name: config.input.iamRoleName },
     TagSpecifications: config.tagSpecifications,
     InstanceMarketOptions: buildMarketOptions(),
-    BlockDeviceMappings: [
+  };
+
+  if (config.input.ec2VolumeDevice) {
+    params['BlockDeviceMappings'] = [
       {
-        DeviceName: '/dev/sda1',
+        DeviceName: config.input.ec2VolumeDevice,
         Ebs: {
-          VolumeSize: 50,
+          VolumeSize: config.input.ec2VolumeSize ?? 8,
           DeleteOnTermination: true,
           VolumeType: 'gp3'
         }
       }
-    ],
-  };
+    ]
+  }
+
 
   try {
     const result = await ec2.send(new RunInstancesCommand(params));

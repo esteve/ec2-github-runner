@@ -25,6 +25,15 @@ inputs:
       EC2 Instance Type.
       This input is required if you use the 'start' mode.
     required: false
+  ec2-volume-device:
+    description: >-
+      Device for setting up an EBS volume, could be used to set the root device.
+      This input is required if you set 'ec2-volume-size'.
+    required: false
+  ec2-volume-size:
+    description: >-
+      Size of the EBS volume, could be used to set the root device.
+    required: false
   subnet-id:
     description: >-
       VPC Subnet Id. The subnet should belong to the same VPC as the specified security group.
